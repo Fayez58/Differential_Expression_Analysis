@@ -6,11 +6,11 @@ library(EnhancedVolcano)
 library(rio)
 
 #Importing count data and metadata
-GSE119436 <- import("Data/GSE119436_raw_counts.tsv")
-metadata <- import("Data/GSE119436_metadata.csv")
+GSE167488 <- import("Data/GSE167488_raw_counts.tsv")
+metadata <- import("Data/GSE167488_metadata.csv")
 
 #formatting count data and metadata for differential expression analysis
-count_data <- GSE119436 |> column_to_rownames("GeneID") |> as.matrix()
+count_data <- GSE167488 |> column_to_rownames("GeneID") |> as.matrix()
 
 coldata <- metadata[,c("Sample Name","tissue")] |> 
   column_to_rownames("Sample Name") |> 
@@ -18,8 +18,8 @@ coldata <- metadata[,c("Sample Name","tissue")] |>
 
 coldata$condition <- coldata$condition |>
   as.character() |>
-  (\(x) gsub("Normal esophagus", "normal", x))() |>
-  (\(x) gsub("Esophageal squamous cell carcinoma", "cancerous", x))() |>
+  (\(x) gsub("Normal tissue", "normal", x))() |>
+  (\(x) gsub("Tumor tissue", "cancerous", x))() |>
   as.factor()
 
 # Match coldata with count matrix
@@ -35,7 +35,7 @@ dds <- DESeqDataSetFromMatrix(
   design = ~condition
 )
 
-dds <- dds[rowSums(counts(dds) >= 20) >= 4, ]
+dds <- dds[rowSums(counts(dds) >= 20) >= 3, ]
 dds$condition <- relevel(dds$condition, ref="normal")
 dds <- DESeq(dds)
 

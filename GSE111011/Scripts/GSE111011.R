@@ -35,7 +35,7 @@ dds <- DESeqDataSetFromMatrix(
   design = ~condition
 )
 
-dds <- dds[rowSums(counts(dds) >= 20) >= 10, ]
+dds <- dds[rowSums(counts(dds) >= 20) >= 7, ]
 dds$condition <- relevel(dds$condition, ref="normal")
 dds <- DESeq(dds)
 
